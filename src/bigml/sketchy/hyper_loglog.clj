@@ -10,11 +10,12 @@
 
 (defn create
   "Creates a hyper-loglog sketch whose cardinality estimation error
-   is similar to the given error rate."
-  [target-error-rate]
-  (let [sketch (max 128 (Math/pow (/ 1.04 target-error-rate) 2))
-        sketch (first (drop-while #(< % sketch) (iterate (partial * 2) 128)))]
-    (vec (repeat sketch (byte 0)))))
+   is similar to the optional error rate (default is 0.05)."
+  ([] (create 0.05))
+  ([target-error-rate]
+     (let [sketch (max 128 (Math/pow (/ 1.04 target-error-rate) 2))
+           sketch (first (drop-while #(< % sketch) (iterate (partial * 2) 128)))]
+       (vec (repeat sketch (byte 0))))))
 
 (defn- insert* [sketch val]
   (let [hash (murmur/long-hash val)
@@ -35,9 +36,12 @@
   [sketch coll]
   (reduce insert* sketch coll))
 
-(defn- merge* [sketch1 sketch2]
+(defn- check-size! [sketch1 sketch2]
   (when (not= (count sketch1) (count sketch2))
-    (throw (Exception. "HyperLogLog sketch must be the same length to merge.")))
+    (throw (Exception. "HyperLogLog sketches must be the same size."))))
+
+(defn- merge* [sketch1 sketch2]
+  (check-size! sketch1 sketch2)
   (mapv (comp byte max) sketch1 sketch2))
 
 (defn merge
@@ -58,3 +62,14 @@
     (long (if (and (< e (* 5 m)) (pos? v))
             (* 2 m (Math/log (/ m v)))
             e))))
+
+(defn similarity
+  "Calculates an estimate of the Jaccard similarity between the sets
+   each sketch represents."
+  [sketch1 sketch2]
+  (check-size! sketch1 sketch2)
+  (let [union (distinct-count (merge sketch1 sketch2))
+        intersection (- (+ (distinct-count sketch1)
+                           (distinct-count sketch2))
+                        union)]
+    (double (/ intersection union))))

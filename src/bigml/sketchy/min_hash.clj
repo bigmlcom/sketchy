@@ -12,10 +12,10 @@
 (defn create
   "Create a min-hash with an optional desired error rate when
    calculating similarity estimates (defaults to 0.05)."
-  [& [error-rate]]
-  (let [error-rate (or error-rate 0.05)]
-    (repeat (int (Math/ceil (/ (* error-rate error-rate))))
-            Integer/MAX_VALUE)))
+  ([] (create 0.05))
+  ([error-rate]
+     (repeat (int (Math/ceil (/ (* error-rate error-rate))))
+             Integer/MAX_VALUE)))
 
 (defn- insert* [sketch val]
   (mapv min sketch (murmur/hash-seq val)))
@@ -30,19 +30,24 @@
   [sketch coll]
   (reduce insert* sketch coll))
 
+(defn- check-size! [sketch1 sketch2]
+  (when (not= (count sketch1) (count sketch2))
+    (throw (Exception. "Min-hash sketches must be the same size."))))
+
 (defn similarity
   "Calculates an estimate of the Jaccard similarity between the sets
    each sketch represents."
   [sketch1 sketch2]
-  (when (not= (count sketch1) (count sketch2))
-    (throw (Exception. "min-hash sketches must be of the same size.")))
+  (check-size! sketch1 sketch2)
   (double (/ (count (filter true? (map = sketch1 sketch2)))
              (count sketch1))))
 
-(defn merge
-  "Merges the two min-hashes (analogous to a union of the sets they
-   represent)."
-  [sketch1 sketch2]
-  (when (not= (count sketch1) (count sketch2))
-    (throw (Exception. "min-hash sketches must be of the same size.")))
+(defn- merge* [sketch1 sketch2]
+  (check-size! sketch1 sketch2)
   (mapv min sketch1 sketch2))
+
+(defn merge
+  [sketch & more]
+  "Merges the min-hashes (analogous to a union of the sets they
+   represent)."
+  (reduce merge* sketch more))

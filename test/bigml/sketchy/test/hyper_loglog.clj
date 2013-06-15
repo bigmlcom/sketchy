@@ -32,3 +32,12 @@
   (let [h1 (reduce hll/insert (hll/create 0.01) (gen-data 10000))
         h2 (reduce hll/insert (hll/create 0.01) (gen-data 15000))]
     (is (<= 24300 (hll/distinct-count (hll/merge h1 h2)) 25700))))
+
+(deftest similarity-test
+  (is (<= 0.85
+          (hll/similarity (hll/into (hll/create) (range 0 5000))
+                          (hll/into (hll/create) (range 500 5000)))
+          0.95))
+  (is (== 1 (hll/similarity (hll/merge (hll/into (hll/create) (range 1000))
+                                       (hll/into (hll/create) (range 500 1500)))
+                            (hll/into (hll/create) (range 1500))))))
