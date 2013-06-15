@@ -35,9 +35,11 @@
 
 (deftest similarity-test
   (is (<= 0.85
-          (hll/similarity (hll/into (hll/create) (range 0 5000))
-                          (hll/into (hll/create) (range 500 5000)))
+          (hll/jaccard-similarity (hll/into (hll/create) (range 0 5000))
+                                  (hll/into (hll/create) (range 500 5000)))
           0.95))
-  (is (== 1 (hll/similarity (hll/merge (hll/into (hll/create) (range 1000))
-                                       (hll/into (hll/create) (range 500 1500)))
-                            (hll/into (hll/create) (range 1500))))))
+  (is (== 1 (hll/jaccard-similarity (hll/merge (hll/into (hll/create)
+                                                         (range 1000))
+                                               (hll/into (hll/create)
+                                                         (range 500 1500)))
+                                    (hll/into (hll/create) (range 1500))))))

@@ -14,8 +14,8 @@
    calculating similarity estimates (defaults to 0.05)."
   ([] (create 0.05))
   ([error-rate]
-     (repeat (int (Math/ceil (/ (* error-rate error-rate))))
-             Integer/MAX_VALUE)))
+     (vec (repeat (int (Math/ceil (/ (* error-rate error-rate))))
+                  Integer/MAX_VALUE))))
 
 (defn- insert* [sketch val]
   (mapv min sketch (murmur/hash-seq val)))
@@ -34,7 +34,7 @@
   (when (not= (count sketch1) (count sketch2))
     (throw (Exception. "Min-hash sketches must be the same size."))))
 
-(defn similarity
+(defn jaccard-similarity
   "Calculates an estimate of the Jaccard similarity between the sets
    each sketch represents."
   [sketch1 sketch2]

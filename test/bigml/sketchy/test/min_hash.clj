@@ -8,9 +8,11 @@
 
 (deftest similarity-test
   (is (<= 0.85
-          (mh/similarity (mh/into (mh/create) (range 0 5000))
-                         (mh/into (mh/create) (range 500 5000)))
+          (mh/jaccard-similarity (mh/into (mh/create) (range 0 5000))
+                                 (mh/into (mh/create) (range 500 5000)))
           0.95))
-  (is (== 1 (mh/similarity (mh/merge (mh/into (mh/create) (range 1000))
-                                     (mh/into (mh/create) (range 500 1500)))
-                           (mh/into (mh/create) (range 1500))))))
+  (is (== 1 (mh/jaccard-similarity (mh/merge (mh/into (mh/create)
+                                                      (range 1000))
+                                             (mh/into (mh/create)
+                                                      (range 500 1500)))
+                                   (mh/into (mh/create) (range 1500))))))

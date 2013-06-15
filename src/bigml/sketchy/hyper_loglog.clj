@@ -45,7 +45,7 @@
   (mapv (comp byte max) sketch1 sketch2))
 
 (defn merge
-  "Merges the hyper-loglog sets."
+  "Merges the hyper-loglog sketches."
   [sketch & more]
   (reduce merge* sketch more))
 
@@ -63,7 +63,7 @@
             (* 2 m (Math/log (/ m v)))
             e))))
 
-(defn similarity
+(defn jaccard-similarity
   "Calculates an estimate of the Jaccard similarity between the sets
    each sketch represents."
   [sketch1 sketch2]

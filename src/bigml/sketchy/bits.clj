@@ -76,8 +76,34 @@
   (check-size! bits1 bits2)
   (mapv bit-or bits1 bits2))
 
+(defn set-count
+  "Returns the total number of set bits."
+  [bits]
+  (reduce + (map #(Long/bitCount %) bits)))
+
 (defn hamming-distance
-  "Returns the hamming distance between the bit sets."
+  "Returns the hamming distance between the bit sets (same as L1 or
+   manhattan distance)."
   [bits1 bits2]
   (check-size! bits1 bits2)
-  (reduce + (map #(Long/bitCount (bit-xor %1 %2)) bits1 bits2)))
+  (set-count (map bit-xor bits1 bits2)))
+
+(defn dot-product
+  "Returns the dot product (or inner product) of the bit sets."
+  [bits1 bits2]
+  (check-size! bits1 bits2)
+  (set-count (map bit-and bits1 bits2)))
+
+(defn jaccard-similarity
+  "Calculates the Jaccard similarity between the bit sets."
+  [bits1 bits2]
+  (let [union (set-count (map bit-or bits1 bits2))]
+    (when (pos? union)
+      (double (/ (dot-product bits1 bits2) union)))))
+
+(defn cosine-similarity
+  "Calculates the cosine similarity between the bit sets."
+  [bits1 bits2]
+  (let [magnitude (Math/sqrt (* (set-count bits1) (set-count bits2)))]
+    (when (pos? magnitude)
+      (/ (dot-product bits1 bits2) magnitude))))
