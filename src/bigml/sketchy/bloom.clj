@@ -5,7 +5,7 @@
 (ns bigml.sketchy.bloom
   "Functions for constructing a bloom filter.
    http://en.wikipedia.org/wiki/Bloom_filter"
-  (:refer-clojure :exclude [merge contains?])
+  (:refer-clojure :exclude [merge contains? into])
   (:import (java.lang Math))
   (:require (bigml.sketchy [murmur :as murmur]
                            [bits :as bits])))
@@ -39,6 +39,11 @@
   "Inserts one or more values into the bloom filter."
   [bloom & vals]
   (reduce insert* bloom vals))
+
+(defn into
+  "Inserts a collection of values into the bloom filter."
+  [bloom coll]
+  (reduce insert* bloom coll))
 
 (defn- merge* [bloom1 bloom2]
   (when (apply not= (map (juxt :k :bits) [bloom1 bloom2]))

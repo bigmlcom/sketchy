@@ -5,7 +5,7 @@
 (ns bigml.sketchy.count-min
   "Functions for constructing a count-min sketch.
    http://en.wikipedia.org/wiki/Count-Min_sketch"
-  (:refer-clojure :exclude [merge count])
+  (:refer-clojure :exclude [merge into])
   (:require (bigml.sketchy [murmur :as murmur])))
 
 (defn- hash-offsets [val hashers hash-bits]
@@ -32,8 +32,12 @@
                         (hash-offsets val hashers hash-bits)))))
 
 (defn insert [sketch & vals]
-  "Inserts a value into the count-min sketch."
+  "Inserts one or more values into the count-min sketch."
   (reduce insert* sketch vals))
+
+(defn into [sketch coll]
+  "Inserts a collection of values into the count-min sketch."
+  (reduce insert* sketch coll))
 
 (defn- merge* [sketch1 sketch2]
   (when (apply not= (map (juxt :hashers :hash-bits) [sketch1 sketch2]))

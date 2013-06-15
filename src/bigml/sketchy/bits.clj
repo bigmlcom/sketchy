@@ -62,7 +62,7 @@
 
 (defn- check-size! [bits1 bits2]
   (when (not= (count bits1) (count bits2))
-    (throw (Exception. "Bit collections are not the same size."))))
+    (throw (Exception. "Bit sets are not the same size."))))
 
 (defn and
   "Ands the two bitsets."
@@ -75,3 +75,9 @@
   [bits1 bits2]
   (check-size! bits1 bits2)
   (mapv bit-or bits1 bits2))
+
+(defn hamming-distance
+  "Returns the hamming distance between the bit sets."
+  [bits1 bits2]
+  (check-size! bits1 bits2)
+  (reduce + (map #(Long/bitCount (bit-xor %1 %2)) bits1 bits2)))

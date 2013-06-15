@@ -12,41 +12,46 @@
   "Creates a hyper-loglog sketch whose cardinality estimation error
    is similar to the given error rate."
   [target-error-rate]
-  (let [bins (max 128 (Math/pow (/ 1.04 target-error-rate) 2))
-        bins (first (drop-while #(< % bins) (iterate (partial * 2) 128)))]
-    (vec (repeat bins (byte 0)))))
+  (let [sketch (max 128 (Math/pow (/ 1.04 target-error-rate) 2))
+        sketch (first (drop-while #(< % sketch) (iterate (partial * 2) 128)))]
+    (vec (repeat sketch (byte 0)))))
 
-(defn- insert* [bins val]
+(defn- insert* [sketch val]
   (let [hash (murmur/long-hash val)
-        bin-index (bit-and (dec (count bins)) hash)
-        offset (Long/numberOfTrailingZeros (count bins))
+        bin-index (bit-and (dec (count sketch)) hash)
+        offset (Long/numberOfTrailingZeros (count sketch))
         zeros (Long/numberOfTrailingZeros (bit-shift-right hash offset))]
-    (if (> zeros (bins bin-index))
-      (assoc bins bin-index (byte zeros))
-      bins)))
+    (if (> zeros (sketch bin-index))
+      (assoc sketch bin-index (byte zeros))
+      sketch)))
 
 (defn insert
-  "Inserts the values into the hyper-loglog sketch."
-  [bins & vals]
-  (reduce insert* bins vals))
+  "Inserts one or more values into the hyper-loglog sketch."
+  [sketch & vals]
+  (reduce insert* sketch vals))
 
-(defn- merge* [bins1 bins2]
-  (when (not= (count bins1) (count bins2))
-    (throw (Exception. "HyperLogLog bins must be the same length to merge.")))
-  (mapv (comp byte max) bins1 bins2))
+(defn into
+  "Inserts a collection of values into the hyper-loglog sketch."
+  [sketch coll]
+  (reduce insert* sketch coll))
+
+(defn- merge* [sketch1 sketch2]
+  (when (not= (count sketch1) (count sketch2))
+    (throw (Exception. "HyperLogLog sketch must be the same length to merge.")))
+  (mapv (comp byte max) sketch1 sketch2))
 
 (defn merge
   "Merges the hyper-loglog sets."
-  [bins & more]
-  (reduce merge* bins more))
+  [sketch & more]
+  (reduce merge* sketch more))
 
 (defn distinct-count
   "Estimates the number of distinct values inserted into the
    hyper-loglog sketch."
-  [bins]
-  (let [m (count bins)
-        v (count (filter zero? bins))
-        e (* (/ (reduce + (map #(Math/pow 2 (- %)) bins)))
+  [sketch]
+  (let [m (count sketch)
+        v (count (filter zero? sketch))
+        e (* (/ (reduce + (map #(Math/pow 2 (- %)) sketch)))
              (bit-shift-left m 1)
              (/ 0.7213 (inc (/ 1.079 m)))
              m)]
