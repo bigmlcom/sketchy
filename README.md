@@ -1,6 +1,5 @@
 
 # Sketching Algorithms in Clojure
-=================================
 
 ## Installation
 
