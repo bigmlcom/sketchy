@@ -78,7 +78,8 @@
      seed - A long value as a seed for the hashing function."
   [val & {:keys [seed type bits] :or {seed 0}}]
   (let [type (pick-type type bits)]
-    (coerce (hash* (hash-fn type seed) val) type bits)))
+    (coerce (hash* (hash-fn type (clojure.core/hash seed)) val)
+            type bits)))
 
 (defn int-hash
   "Hashes the given value into an integer representing 32 bits. A
