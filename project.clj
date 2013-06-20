@@ -1,4 +1,4 @@
-(defproject sketchy "0.1.0-SNAPSHOT"
+(defproject sketchy "0.1.0"
   :description "Sketching algorithms in Clojure"
   :url "https://github.com/bigmlcom/sketchy"
   :license {:name "Apache License, Version 2.0"
