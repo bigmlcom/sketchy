@@ -21,18 +21,18 @@ All the sketches are composed using vanilla Clojure data structures,
 so immutability and easy serialization are included for free.
 
 General Utilities:
-- [Murmur Hash](#murmur-hash) - `bigml.sketchy.murmur`
-- [Immutable Bitset](#immutable-bitset) - `bigml.sketchy.bits`
+- [Murmur Hash](#murmur-hash)
+- [Immutable Bitset](#immutable-bitset)
 
 Sketching/hash-based algorithms:
 - [Bloom Filter](#bloom-filter)
 - [Min Hash](#min-hash)
-- [Hyper-LogLog](#hyper-logLog)
+- [Hyper-LogLog](#hyper-loglog)
 - [Count-Min](#count-min)
 
 As we review each topic, feel free to follow along in the REPL. Note
-that `bigml.sketchy.test.demo` loads Hamlet and A Midsummer Night's
-Dream into memory for our code examples.
+that `bigml.sketchy.test.demo` loads *Hamlet* and *A Midsummer Night's
+Dream* into memory for our code examples.
 
 ```clojure
 user> (ns test
@@ -62,7 +62,7 @@ test> (murmur/hash "foo")
 
 Setting the `:type` parameter to `:int` (32 bits), `:long` (64 bits),
 `:bigint` (128 bits), or `:bytes` (128 bits) will return a hash using
-corresponding datatype.
+the corresponding datatype.
 
 ```clojure
 test> (murmur/hash "foo" :type :int)
@@ -79,7 +79,7 @@ Setting the `:seed` parameter selects a unique hashing
 function. Anything that's hashable by `clojure.core/hash` is valid as
 a seed.
 
-```
+```clojure
 test> (murmur/hash "foo" :seed 0)
 2085578581
 test> (murmur/hash "foo" :seed 42)
@@ -92,7 +92,7 @@ The `:bits` parameter can be used to truncate the number of bits
 returned in the hash. For example, setting `:bits` to 8 will return a
 hash value between 0 and 255.
 
-```
+```clojure
 test> (murmur/hash "foo" :bits 16)
 26453
 test> (murmur/hash "foo" :bits 8)
@@ -101,7 +101,7 @@ test> (murmur/hash "foo" :bits 4)
 5
 ```
 
-If you need multiple unique hashes for a value, `hash-s\eq` is a
+If you need multiple unique hashes for a value, `hash-seq` is a
 convenience function for that.  It applies an infinite sequence of
 unique hash functions (always in the same order), so `take` as many
 as you need.
@@ -111,7 +111,7 @@ test> (take 5 (murmur/hash-seq "foo"))
 (-686467394 -1249983478 2108059474 208250426 -863809458)
 ```
 
-If you want a hash quickly and you don't care about seeds or
+If you need a hash quickly and you don't care about seeds or
 truncating bits, look to `int-hash`, `long-hash`, `bigint-hash`, or
 `bytes-hash`.
 
@@ -130,8 +130,8 @@ Besides being my favorite name for a namespace, `bigml.sketchy.bits`
 provides an immutable bitset supporting bit-level operations for any
 number of bits. The bitset is backed by a vector of longs.
 
-Given the desired number of bits, the `create` function builds a
-bitset. Every bit will be initialized as clear (all zero).
+The `create` function builds a bitset given the desired number of
+bits. Every bit will be initialized as clear (all zero).
 
 The `set` function sets the bits at the given indicies. The `test`
 function returns true if the bit at the given index is set.
@@ -163,19 +163,19 @@ test> (bits/set-seq (bits/flip my-bits 48))
 (2 58 184 233)
 ```
 
-The namespace also offers functions to `and` and `or` two bitsets. You
-can also measure `hamming-distance`, `jaccard-similarity`, or
-`cosine-similarity`.
+Moreover, the namespace offers functions to `and` and `or` two
+bitsets. You can also measure `hamming-distance`,
+`jaccard-similarity`, or `cosine-similarity`.
 
 ## Bloom Filter
 
 `bigml.sketchy.bloom` contains an implementation of a [Bloom
 filter](http://en.wikipedia.org/wiki/Bloom_filter), useful for testing
-set membership. When testing set membership for an item, false
+set membership. When checking set membership for an item, false
 positives are possible but false negatives are not.
 
 You may `create` a Bloom filter by providing the expected number of
-items to be inserted into the filter, and the acceptable
+items to be inserted into the filter and the acceptable
 false positive rate.
 
 After creating the filter, you may either `insert` individual items or
@@ -192,7 +192,7 @@ test> (def midsummer-bloom
                     midsummer-tokens))
 ```
 
-Finally, item membership is tested with `contains?`.
+Item membership is tested with `contains?`.
 
 ```clojure
 test> (bloom/contains? hamlet-bloom "puck")
@@ -228,13 +228,13 @@ To `create` a MinHash, you may provide a target error rate for
 similarity (default is 0.05). After that, you can either `insert`
 individual values or add collections `into` the MinHash.
 
-In the following example we break A Midsummer Night's Dream into two
+In the following example we break *A Midsummer Night's Dream* into two
 halves (`midsummer-part1` and `midsummer-part2`) and build a MinHash
 for each. We then compare the two parts together to see if they are
-more similar than a MinHash of Hamlet.
+more similar than a MinHash of *Hamlet*.
 
-As we'd expect, the two halves of A Midsummer Night's Dream are more
-alike than Hamlet.
+As we'd expect, the two halves of *A Midsummer Night's Dream* are more
+alike than *Hamlet*.
 
 ```clojure
 test> (def hamlet-hash (min-hash/into (min-hash/create) hamlet-tokens))
@@ -246,8 +246,8 @@ test> (min-hash/jaccard-similarity midsummer1-hash hamlet-hash)
 0.2175
 ```
 
-The MinHashes are merge friendly as long as their initialized with the
-same target error rate.
+The MinHashes are merge friendly as long as they're initialized with
+the same target error rate.
 
 ```clojure
 test> (def midsummer-hash (min-hash/into (min-hash/create) midsummer-tokens))
@@ -260,8 +260,8 @@ test> (min-hash/jaccard-similarity midsummer-hash
 ## Hyper-LogLog
 
 `bigml.sketchy.hyper-loglog` contains an implementation of the
-[HyperLogLog](http://research.google.com/pubs/pub40671.html), useful
-for estimating the number of distinct items in a set. This is a
+[HyperLogLog](http://research.google.com/pubs/pub40671.html) sketch,
+useful for estimating the number of distinct items in a set. This is a
 technique popular for tracking unique visitors over time.
 
 To `create` a HyperLogLog sketch, you may provide a target error rate
@@ -282,7 +282,7 @@ test> (hll/distinct-count midsummer-hll) ;; estimated
 3018
 ```
 
-HyperLogLog sketches may be merged if they were initialized with the
+HyperLogLog sketches may be merged if they're initialized with the
 same error rate.
 
 ```clojure
@@ -321,7 +321,8 @@ After creating a sketch, you may either `insert` individual values or
 add collections `into` the sketch.
 
 In the example below we build a Count-Min sketch that uses 1500
-counters to estimate frequencies for the 4800 unique tokens in Hamlet.
+counters to estimate frequencies for the 4800 unique tokens in
+*Hamlet*.
 
 ```clojure
 test> (def hamlet-cm (count-min/into (count-min/create :hash-bits 9)
@@ -339,7 +340,7 @@ test> (count-min/estimate-count hamlet-cm "rosencrantz")
 ```
 
 As with the other sketching algorithms, Count-Min sketches may be
-merged if they were initialized with the same parameters.
+merged if they're initialized with the same parameters.
 
 ```clojure
 test> (def midsummer1-cm (count-min/into (count-min/create :hash-bits 9)
