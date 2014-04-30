@@ -1,14 +1,15 @@
-;; Copyright 2013 BigML
+;; Copyright 2013, 2014 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
 (ns bigml.sketchy.bloom
   "Functions for constructing a bloom filter.
    http://en.wikipedia.org/wiki/Bloom_filter"
-  (:refer-clojure :exclude [merge contains? into])
+  (:refer-clojure :exclude [merge contains? into distinct])
   (:import (java.lang Math))
   (:require (bigml.sketchy [murmur :as murmur]
-                           [bits :as bits])))
+                           [bits :as bits])
+            (bigml.sampling [random :as random])))
 
 (def ^:private log2 (Math/log 2))
 
@@ -23,17 +24,18 @@
 (defn create
   "Creates a bloom filter given the expected unique population and the
    desired false positive rate."
-  [population false-positive-rate]
+  [population false-positive-rate & [seed]]
   (let [[bits k] (choose-params population false-positive-rate)]
     {:bins (bits/create (bit-shift-left 1 bits))
      :bits bits
+     :seed (or seed 0)
      :k k}))
 
 (defn- insert* [bloom val]
-  (let [{:keys [bits k bins]} bloom]
+  (let [{:keys [bits k bins seed]} bloom]
     (assoc bloom
       :bins (apply bits/set bins
-                   (take k (murmur/hash-seq val :bits bits))))))
+                   (take k (murmur/hash-seq val :bits bits :seed seed))))))
 
 (defn insert
   "Inserts one or more values into the bloom filter."
@@ -64,3 +66,14 @@
   (let [{:keys [bits k bins]} bloom]
     (every? true? (map (partial bits/test bins)
                        (take k (murmur/hash-seq val :bits bits))))))
+
+(defn distinct
+  "Removes non-distinct items."
+  [vals & {:keys [population false-positive-rate seed]}]
+  (let [bf (atom (create (or population 1E4)
+                         (or false-positive-rate 1E-2)
+                         seed))]
+    (remove #(let [is-member (contains? @bf %)]
+               (when-not is-member (swap! bf insert %))
+               is-member)
+            vals)))

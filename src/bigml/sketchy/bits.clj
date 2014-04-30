@@ -1,4 +1,4 @@
-;; Copyright 2013 BigML
+;; Copyright 2013, 2014 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
@@ -104,6 +104,6 @@
 (defn cosine-similarity
   "Calculates the cosine similarity between the bit sets."
   [bits1 bits2]
-  (let [magnitude (Math/sqrt (* (set-count bits1) (set-count bits2)))]
+  (let [magnitude (* (set-count bits1) (set-count bits2))]
     (when (pos? magnitude)
       (/ (dot-product bits1 bits2) magnitude))))
