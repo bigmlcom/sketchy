@@ -9,7 +9,7 @@
 For [Leiningen](https://github.com/technomancy/leiningen):
 
 ```clojure
-[bigml/sketchy "0.1.0"]
+[bigml/sketchy "0.2.0"]
 ```
 
 ## Overview
