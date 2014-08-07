@@ -1,4 +1,4 @@
-;; Copyright 2013 BigML
+;; Copyright 2013, 2014 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
@@ -47,7 +47,7 @@
   (mapv min sketch1 sketch2))
 
 (defn merge
-  [sketch & more]
   "Merges the min-hashes (analogous to a union of the sets they
    represent)."
+  [sketch & more]
   (reduce merge* sketch more))

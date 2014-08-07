@@ -1,4 +1,4 @@
-;; Copyright 2013 BigML
+;; Copyright 2013, 2014 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
@@ -31,12 +31,14 @@
                         counters
                         (hash-offsets val hashers hash-bits)))))
 
-(defn insert [sketch & vals]
+(defn insert
   "Inserts one or more values into the count-min sketch."
+  [sketch & vals]
   (reduce insert* sketch vals))
 
-(defn into [sketch coll]
+(defn into
   "Inserts a collection of values into the count-min sketch."
+  [sketch coll]
   (reduce insert* sketch coll))
 
 (defn- merge* [sketch1 sketch2]

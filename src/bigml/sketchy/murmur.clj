@@ -24,7 +24,7 @@
 
 (defn- take-bits-big [val bits]
   (.and (biginteger val)
-        (.subtract (.setBit big-zero bits) big-one)))
+        (.subtract (.setBit ^BigInteger big-zero bits) big-one)))
 
 (defn- take-bits [bits val]
   (cond (or (instance? Integer val) (instance? Long val))

@@ -17,7 +17,7 @@
   (let [bins (- (/ (* population (Math/log false-positive-prob))
                    (* log2 log2)))
         bins (first (drop-while #(< % bins) (iterate (partial * 2) 1)))
-        k (* (/ bins population) log2)]
+        k (double (* (/ bins population) log2))]
     [(Long/numberOfTrailingZeros bins)
      (Math/round k)]))
 

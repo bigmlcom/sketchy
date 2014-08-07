@@ -17,8 +17,10 @@ For [Leiningen](https://github.com/technomancy/leiningen):
 This library contains various sketching/hash-based algorithms useful
 for building compact summaries of large datasets.
 
-All the sketches are composed using vanilla Clojure data structures,
-so immutability and easy serialization are included for free.
+All the sketches are composed using vanilla Clojure data
+structures. That means immutability and easy serialization but humble
+performance. [stream-lib](https://github.com/addthis/stream-lib) is a
+good alternative for those in need of speed.
 
 General Utilities:
 - [Murmur Hash](#murmur-hash)
@@ -30,7 +32,7 @@ Sketching/hash-based algorithms:
 - [Hyper-LogLog](#hyper-loglog)
 - [Count-Min](#count-min)
 
-As we review each topic, feel free to follow along in the REPL. Note
+As we review each section, feel free to follow along in the REPL. Note
 that `bigml.sketchy.test.demo` loads *Hamlet* and *A Midsummer Night's
 Dream* into memory for our code examples.
 
@@ -50,8 +52,8 @@ user> (ns test
 The `bigml.sketchy.murmur` namespace piggybacks
 [Guava](https://code.google.com/p/guava-libraries/) to make it easy to
 generate [Murmur hashes](http://en.wikipedia.org/wiki/MurmurHash).
-Murmur hashing is popular for sketching and hash-based algorithms
-since the hashes are quick to produce but still decently random.
+Murmur hashing is popular for sketching and hash-based algorithms as
+the hashes are quick to produce and adequately random.
 
 A simple example hashing the string "foo" to a random integer:
 
