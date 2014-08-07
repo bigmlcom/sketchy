@@ -1,10 +1,10 @@
-;; Copyright 2013 BigML
+;; Copyright 2013, 2014 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
 (ns bigml.sketchy.test.bloom
-  (:use clojure.test)
-  (:require (bigml.sketchy [bloom :as bloom])))
+  (:require [clojure.test :refer :all]
+            (bigml.sketchy [bloom :as bloom])))
 
 (deftest bloom
   (let [d1 (range 10000)

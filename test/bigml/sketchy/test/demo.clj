@@ -1,9 +1,8 @@
-;; Copyright 2013 BigML
+;; Copyright 2013, 2014 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
 (ns bigml.sketchy.test.demo
-  (:use clojure.test)
   (:import (java.util.zip GZIPInputStream))
   (:require [clojure.java.io :as io]
             [clojure.string :as str]))
