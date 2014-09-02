@@ -1,10 +1,10 @@
-;; Copyright 2013 BigML
+;; Copyright 2013, 2014 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
 (ns bigml.sketchy.test.hyper-loglog
-  (:use clojure.test)
-  (:require (bigml.sketchy [hyper-loglog :as hll])))
+  (:require [clojure.test :refer :all]
+            (bigml.sketchy [hyper-loglog :as hll])))
 
 (defn- gen-data [size]
   (let [maxint Integer/MAX_VALUE]

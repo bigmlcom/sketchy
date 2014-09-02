@@ -1,4 +1,4 @@
-;; Copyright 2013 BigML
+;; Copyright 2013, 2014 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
@@ -18,7 +18,18 @@
                   Integer/MAX_VALUE))))
 
 (defn- insert* [sketch val]
-  (mapv min sketch (murmur/hash-seq val)))
+  (let [sketch-size (count sketch)]
+    (loop [i 0
+           hashes (murmur/hash-seq val)
+           sketch sketch]
+      (if (= i sketch-size)
+        sketch
+        (let [h (first hashes)]
+          (recur (inc i)
+                 (next hashes)
+                 (if (> (sketch i) h)
+                   (assoc sketch i h)
+                   sketch)))))))
 
 (defn insert
   "Inserts one or more values into the min-hash."
@@ -47,7 +58,7 @@
   (mapv min sketch1 sketch2))
 
 (defn merge
-  [sketch & more]
   "Merges the min-hashes (analogous to a union of the sets they
    represent)."
+  [sketch & more]
   (reduce merge* sketch more))
