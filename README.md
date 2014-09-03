@@ -52,7 +52,7 @@ user> (ns test
 The `bigml.sketchy.sip` namespace piggybacks
 [Guava](https://code.google.com/p/guava-libraries/) to make it easy to
 generate [Sip hashes](http://en.wikipedia.org/wiki/SipHash).  Sip
-hashes are popular as they are resonably quick to produce, adequately
+hashes are popular as they are reasonably quick to produce, adequately
 random, and robust to security issues.
 
 These Sip hashes are all produced as 64 bit longs.  A simple example
