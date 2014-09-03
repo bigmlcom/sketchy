@@ -9,7 +9,7 @@
 For [Leiningen](https://github.com/technomancy/leiningen):
 
 ```clojure
-[bigml/sketchy "0.1.0"]
+[bigml/sketchy "0.2.0"]
 ```
 
 ## Overview
@@ -17,11 +17,13 @@ For [Leiningen](https://github.com/technomancy/leiningen):
 This library contains various sketching/hash-based algorithms useful
 for building compact summaries of large datasets.
 
-All the sketches are composed using vanilla Clojure data structures,
-so immutability and easy serialization are included for free.
+All the sketches are composed using vanilla Clojure data
+structures. That means immutability and easy serialization but humble
+performance. [stream-lib](https://github.com/addthis/stream-lib) is a
+good alternative for those in need of speed.
 
 General Utilities:
-- [Murmur Hash](#murmur-hash)
+- [SipHash](#sip-hash)
 - [Immutable Bitset](#immutable-bitset)
 
 Sketching/hash-based algorithms:
@@ -30,14 +32,14 @@ Sketching/hash-based algorithms:
 - [Hyper-LogLog](#hyper-loglog)
 - [Count-Min](#count-min)
 
-As we review each topic, feel free to follow along in the REPL. Note
+As we review each section, feel free to follow along in the REPL. Note
 that `bigml.sketchy.test.demo` loads *Hamlet* and *A Midsummer Night's
 Dream* into memory for our code examples.
 
 ```clojure
 user> (ns test
         (:use [bigml.sketchy.test.demo])
-        (:require (bigml.sketchy [murmur :as murmur]
+        (:require (bigml.sketchy [sip :as sip]
                                  [bits :as bits]
                                  [bloom :as bloom]
                                  [min-hash :as min-hash]
@@ -45,60 +47,44 @@ user> (ns test
                                  [count-min :as count-min])))
 ```
 
-## Murmur Hash
+## SipHash
 
-The `bigml.sketchy.murmur` namespace piggybacks
+The `bigml.sketchy.sip` namespace piggybacks
 [Guava](https://code.google.com/p/guava-libraries/) to make it easy to
-generate [Murmur hashes](http://en.wikipedia.org/wiki/MurmurHash).
-Murmur hashing is popular for sketching and hash-based algorithms
-since the hashes are quick to produce but still decently random.
+generate [Sip hashes](http://en.wikipedia.org/wiki/SipHash).  Sip
+hashes are popular as they are resonably quick to produce, adequately
+random, and robust to security issues.
 
-A simple example hashing the string "foo" to a random integer:
+These Sip hashes are all produced as 64 bit longs.  A simple example
+hashing the string "foo" to a long:
 
 ```clojure
-test> (murmur/hash "foo")
-2085578581
+test> (sip/hash "foo")
+2121124175213604009
 ```
 
-Setting the `:type` parameter to `:int` (32 bits), `:long` (64 bits),
-`:bigint` (128 bits), or `:bytes` (128 bits) will return a hash using
-the corresponding datatype.
+An optional seed parameter selects a unique hashing function. Anything
+that's hashable by `clojure.core/hash` is valid as a seed.
 
 ```clojure
-test> (murmur/hash "foo" :type :int)
-2085578581
-test> (murmur/hash "foo" :type :long)
-5208370748186188588
-test> (murmur/hash "foo" :type :bigint)
-58959437246456010946025114970552624115N
-test> (murmur/hash "foo" :type :bytes)
-#<byte[] [B@266bf9b5>
+test> (sip/hash "foo" 0)
+-4874926522583603657
+test> (sip/hash "foo" 42)
+-1062743973399493368
+test> (sip/hash "foo" :bar)
+-5589927979006578086
 ```
 
-Setting the `:seed` parameter selects a unique hashing
-function. Anything that's hashable by `clojure.core/hash` is valid as
-a seed.
+The `truncate` function can be used to truncate the number of bits
+(must be less than 64 and more than 0).
 
 ```clojure
-test> (murmur/hash "foo" :seed 0)
-2085578581
-test> (murmur/hash "foo" :seed 42)
--1572900843
-test> (murmur/hash "foo" :seed "bar")
--773560348
-```
-
-The `:bits` parameter can be used to truncate the number of bits
-returned in the hash. For example, setting `:bits` to 8 will return a
-hash value between 0 and 255.
-
-```clojure
-test> (murmur/hash "foo" :bits 16)
-26453
-test> (murmur/hash "foo" :bits 8)
-85
-test> (murmur/hash "foo" :bits 4)
-5
+test> (sip/truncate (sip/hash "foo") 32)
+4229541033
+test> (sip/truncate (sip/hash "foo") 16)
+44201
+test> (sip/truncate (sip/hash "foo") 8)
+169
 ```
 
 If you need multiple unique hashes for a value, `hash-seq` is a
@@ -107,21 +93,8 @@ unique hash functions (always in the same order), so `take` as many
 as you need.
 
 ```clojure
-test> (take 5 (murmur/hash-seq "foo"))
-(-686467394 -1249983478 2108059474 208250426 -863809458)
-```
-
-If you need a hash quickly and you don't care about seeds or
-truncating bits, look to `int-hash`, `long-hash`, `bigint-hash`, or
-`bytes-hash`.
-
-```clojure
-test> (time (murmur/hash "foo"))
-"Elapsed time: 0.063 msecs"
-2085578581
-test> (time (murmur/int-hash "foo"))
-"Elapsed time: 0.047 msecs"
-2085578581
+test> (take 3 (sip/hash-seq "foo"))
+(-4874926522583603657 2540774949006662565 6327481778609814014)
 ```
 
 ## Immutable Bitset
