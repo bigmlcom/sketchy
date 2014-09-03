@@ -41,7 +41,7 @@
   (bit-and hash-val (unchecked-dec (bit-shift-left 1 bits))))
 
 (defn hash-seq
-  "Returns a lazy infinate sequence of hashes (each with a unique
+  "Returns a lazy infinite sequence of hashes (each with a unique
    seed) given a value and optional desired bits."
   ([val]
      (map hash (repeat val) (range)))
