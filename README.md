@@ -23,7 +23,7 @@ performance. [stream-lib](https://github.com/addthis/stream-lib) is a
 good alternative for those in need of speed.
 
 General Utilities:
-- [SipHash](#sip-hash)
+- [SipHash](#siphash)
 - [Immutable Bitset](#immutable-bitset)
 
 Sketching/hash-based algorithms:
