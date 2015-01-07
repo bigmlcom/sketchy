@@ -23,7 +23,7 @@ performance. [stream-lib](https://github.com/addthis/stream-lib) is a
 good alternative for those in need of speed.
 
 General Utilities:
-- [SipHash](#siphash)
+- [MurmurHash](#murmurhash)
 - [Immutable Bitset](#immutable-bitset)
 
 Sketching/hash-based algorithms:
@@ -39,7 +39,7 @@ Dream* into memory for our code examples.
 ```clojure
 user> (ns test
         (:use [bigml.sketchy.test.demo])
-        (:require (bigml.sketchy [sip :as sip]
+        (:require (bigml.sketchy [murmur :as murmur]
                                  [bits :as bits]
                                  [bloom :as bloom]
                                  [min-hash :as min-hash]
@@ -47,44 +47,43 @@ user> (ns test
                                  [count-min :as count-min])))
 ```
 
-## SipHash
+## MurmurHash
 
-The `bigml.sketchy.sip` namespace piggybacks
-[Guava](https://code.google.com/p/guava-libraries/) to make it easy to
-generate [Sip hashes](http://en.wikipedia.org/wiki/SipHash).  Sip
-hashes are popular as they are reasonably quick to produce, adequately
-random, and robust to security issues.
+The `bigml.sketchy.murmur` namespace makes it easy to generate seeded
+[Murmur hashes](http://en.wikipedia.org/wiki/MurmurHash).  Murmur hashes
+are popular as they are reasonably quick to produce and adequately
+random.
 
-These Sip hashes are all produced as 64 bit longs.  A simple example
+These Murmur hashes are all produced as 64 bit longs.  A simple example
 hashing the string "foo" to a long:
 
 ```clojure
-test> (sip/hash "foo")
-2121124175213604009
+test> (murmur/hash "foo")
+6231696022289519434
 ```
 
 An optional seed parameter selects a unique hashing function. Anything
 that's hashable by `clojure.core/hash` is valid as a seed.
 
 ```clojure
-test> (sip/hash "foo" 0)
--4874926522583603657
-test> (sip/hash "foo" 42)
--1062743973399493368
-test> (sip/hash "foo" :bar)
--5589927979006578086
+test> (murmur/hash "foo" 0)
+6231696022289519434
+test> (murmur/hash "foo" 42)
+-8820575662888368925
+test> (murmur/hash "foo" :bar)
+-8527955061573093315
 ```
 
 The `truncate` function can be used to truncate the number of bits
 (must be less than 64 and more than 0).
 
 ```clojure
-test> (sip/truncate (sip/hash "foo") 32)
-4229541033
-test> (sip/truncate (sip/hash "foo") 16)
-44201
-test> (sip/truncate (sip/hash "foo") 8)
-169
+test> (murmur/truncate (murmur/hash "foo") 32)
+3972535114
+test> (murmur/truncate (murmur/hash "foo") 16)
+4938
+test> (murmur/truncate (murmur/hash "foo") 8)
+74
 ```
 
 If you need multiple unique hashes for a value, `hash-seq` is a
@@ -93,8 +92,8 @@ unique hash functions (always in the same order), so `take` as many
 as you need.
 
 ```clojure
-test> (take 3 (sip/hash-seq "foo"))
-(-4874926522583603657 2540774949006662565 6327481778609814014)
+test> (take 3 (murmur/hash-seq "foo"))
+(6231696022289519434 -1965669315023635442 -4826411765733908310)
 ```
 
 ## Immutable Bitset

@@ -1,4 +1,4 @@
-;; Copyright 2013, 2014 BigML
+;; Copyright 2013, 2014, 2015 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
@@ -6,7 +6,7 @@
   "Functions for constructing a count-min sketch.
    http://en.wikipedia.org/wiki/Count-Min_sketch"
   (:refer-clojure :exclude [merge into])
-  (:require (bigml.sketchy [sip :as sip])))
+  (:require (bigml.sketchy [murmur :as murmur])))
 
 (defn- hash-offsets [val hashers hash-bits]
   (let [offset (bit-shift-left 1 hash-bits)
@@ -16,7 +16,7 @@
       (if (= i hashers)
         offsets
         (recur (inc i)
-               (conj offsets (+ (bit-and (sip/hash val i) doffset)
+               (conj offsets (+ (bit-and (murmur/hash val i) doffset)
                                 (* offset i))))))))
 
 (defn create

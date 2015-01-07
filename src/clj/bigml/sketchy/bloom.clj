@@ -1,4 +1,4 @@
-;; Copyright 2013, 2014 BigML
+;; Copyright 2013, 2014, 2015 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
@@ -7,7 +7,7 @@
    http://en.wikipedia.org/wiki/Bloom_filter"
   (:refer-clojure :exclude [merge contains? into distinct])
   (:import (java.lang Math))
-  (:require (bigml.sketchy [sip :as sip]
+  (:require (bigml.sketchy [murmur :as murmur]
                            [bits :as bits])))
 
 (def ^:private log2 (Math/log 2))
@@ -32,7 +32,7 @@
 (defn- insert* [bloom val]
   (let [{:keys [bits k bins]} bloom]
     (assoc bloom
-      :bins (apply bits/set bins (take k (sip/hash-seq val bits))))))
+      :bins (apply bits/set bins (take k (murmur/hash-seq val bits))))))
 
 (defn insert
   "Inserts one or more values into the bloom filter."
@@ -62,7 +62,7 @@
   [bloom val]
   (let [{:keys [bits k bins]} bloom]
     (every? true? (map (partial bits/test bins)
-                       (take k (sip/hash-seq val bits))))))
+                       (take k (murmur/hash-seq val bits))))))
 
 (defn distinct
   "Removes non-distinct items."

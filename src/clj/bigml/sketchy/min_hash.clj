@@ -1,4 +1,4 @@
-;; Copyright 2013, 2014 BigML
+;; Copyright 2013, 2014, 2015 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
@@ -7,7 +7,7 @@
    http://en.wikipedia.org/wiki/MinHash"
   (:refer-clojure :exclude [merge into])
   (:import (java.lang Math))
-  (:require (bigml.sketchy [sip :as sip])))
+  (:require (bigml.sketchy [murmur :as murmur])))
 
 (defn create
   "Create a min-hash with an optional desired error rate when
@@ -20,7 +20,7 @@
 (defn- insert* [sketch val]
   (let [sketch-size (count sketch)]
     (loop [i 0
-           hashes (sip/hash-seq val)
+           hashes (murmur/hash-seq val)
            sketch sketch]
       (if (= i sketch-size)
         sketch

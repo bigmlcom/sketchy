@@ -1,4 +1,4 @@
-;; Copyright 2013, 2014 BigML
+;; Copyright 2013, 2014, 2015 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
@@ -23,4 +23,4 @@
         sketch (reduce cm/insert (cm/create) data)]
     (doseq [val (range 150)]
       (let [{:keys [estimate actual]} (test-sketch sketch data val)]
-        (is (< (- estimate actual) 10))))))
+        (is (< (- estimate actual) 15))))))

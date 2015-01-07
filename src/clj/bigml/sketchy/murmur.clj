@@ -1,39 +1,35 @@
-;; Copyright 2014 BigML
+;; Copyright 2014, 2015 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
-(ns bigml.sketchy.sip
-  "Functions for Sip-hashing, wrapping Guava's implementation.
-   http://en.wikipedia.org/wiki/SipHash"
+(ns bigml.sketchy.murmur
+  "Functions for Murmur hashing.
+   http://en.wikipedia.org/wiki/MurmurHash"
   (:refer-clojure :exclude [hash])
-  (:import (com.google.common.hash Hashing HashFunction)
-           (bigml.sketchy SipUtil)))
+  (:import (bigml.sketchy MurmurUtil)))
 
-(defn- ^HashFunction sip-hasher
-  ([]
-     (Hashing/sipHash24))
-  ([k]
-     (Hashing/sipHash24 k (inc k)))
-  ([k0 k1]
-     (Hashing/sipHash24 k0 k1)))
+(def ^:private default-seed 1651860712)
 
-(defn- hash* [^HashFunction hf val]
-  (let [hv (SipUtil/hash hf val)]
-    (if (zero? hv)
-      (hash* hf (clojure.core/hash val))
-      hv)))
+(defn- hash* [val seed]
+  (if val
+    (let [hv (MurmurUtil/hash val seed)]
+      (if (zero? hv)
+        (hash* (clojure.core/hash val) seed)
+        hv))
+    0))
 
 (defn- seed->long [seed]
-  (if (instance? Long seed)
-    seed
-    (clojure.core/hash seed)))
+  (cond (nil? seed) default-seed
+        (not (instance? Long seed)) (clojure.core/hash seed)
+        (zero? seed) default-seed
+        :else seed))
 
 (defn hash
   "Returns a long hash given a value and an optional seed."
   ([val]
-     (hash* (sip-hasher) val))
+     (hash* val default-seed))
   ([val seed]
-     (hash* (sip-hasher (seed->long seed)) val)))
+     (hash* val (seed->long seed))))
 
 (defn truncate
   "Truncates the hash-value given the desired number of bits."

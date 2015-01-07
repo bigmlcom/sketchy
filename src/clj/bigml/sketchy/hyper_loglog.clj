@@ -1,4 +1,4 @@
-;; Copyright 2013, 2014 BigML
+;; Copyright 2013, 2014, 2015 BigML
 ;; Licensed under the Apache License, Version 2.0
 ;; http://www.apache.org/licenses/LICENSE-2.0
 
@@ -6,7 +6,7 @@
   "Implements the hyper-loglog algorithm backed by a vector of bytes.
    http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.142.9475"
   (:refer-clojure :exclude [merge into])
-  (:require (bigml.sketchy [sip :as sip])))
+  (:require (bigml.sketchy [murmur :as murmur])))
 
 (defn create
   "Creates a hyper-loglog sketch whose cardinality estimation error
@@ -18,7 +18,7 @@
        (vec (repeat sketch (byte 0))))))
 
 (defn- insert* [sketch val]
-  (let [hv (sip/hash val)
+  (let [hv (murmur/hash val)
         bin-index (bit-and (dec (count sketch)) hv)
         offset (Long/numberOfTrailingZeros (count sketch))
         zeros (Long/numberOfTrailingZeros (bit-shift-right hv offset))]
