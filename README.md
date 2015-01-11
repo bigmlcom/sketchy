@@ -62,6 +62,14 @@ test> (murmur/hash "foo")
 6231696022289519434
 ```
 
+Anything that `clojure.core/hash` accepts may also be used with this
+hash fn:
+
+```clojure
+test> (murmur/hash {:foo "bar"})
+-7720779806311024803
+```
+
 An optional seed parameter selects a unique hashing function. Anything
 that's hashable by `clojure.core/hash` is valid as a seed.
 

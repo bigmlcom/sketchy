@@ -11,7 +11,7 @@
                [1E16 4977900633541538766]
                [(long 1E16) -4083462578434211217]
                ["hash me!" -3694557840885048153]
-               [{:foo 1 :bar 2} -2811517481304713575]]]
+               [{:foo 1 :bar 2} -584811730086931020]]]
     (doseq [[val expected-hash] pairs]
       (is (= expected-hash (murmur/hash val))))))
 

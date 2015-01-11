@@ -27,9 +27,9 @@
 (defn hash
   "Returns a long hash given a value and an optional seed."
   ([val]
-     (hash* val default-seed))
+   (hash* val default-seed))
   ([val seed]
-     (hash* val (seed->long seed))))
+   (hash* val (seed->long seed))))
 
 (defn truncate
   "Truncates the hash-value given the desired number of bits."

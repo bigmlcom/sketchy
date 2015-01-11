@@ -5,34 +5,39 @@
  */
 package bigml.sketchy;
 
+import byte_transforms.CassandraMurmurHash;
+import java.nio.ByteBuffer;
+
 public class MurmurUtil {
 
   public static long hash(Object o, long seed) {
     Class cls = o.getClass();
     
-    byte[] bytes;
+    ByteBuffer bytes;
+    
     if (cls == Double.class) {
-      bytes = toBytes(Double.doubleToLongBits((Double) o));
+      bytes = ByteBuffer.allocate(8);
+      bytes.putDouble((Double) o);
     } else if (cls == Long.class) {
-      bytes = toBytes((Long) o);
-    } else if (cls == Integer.class || o == Short.class || o == Byte.class) {
-      bytes = toBytes(((Number) o).longValue());
+      bytes = ByteBuffer.allocate(8);
+      bytes.putLong((Long) o);
     } else if (cls == String.class) {
-      bytes = ((String) o).getBytes();
+      byte[] rawBytes = ((String) o).getBytes();
+      bytes = ByteBuffer.allocate(rawBytes.length);
+      bytes.put(rawBytes);
+    } else if (cls == Integer.class) {
+      bytes = ByteBuffer.allocate(4);
+      bytes.putInt((Integer) o);
+    } else if (cls == Short.class) {
+      bytes = ByteBuffer.allocate(2);
+      bytes.putShort((Short) o);
+    } else if (cls == Byte.class) {
+      bytes = ByteBuffer.allocate(1);
+      bytes.put((Byte) o);
     } else {
       return 0;
     }
-    
-    return MurmurHash.hash64(bytes, bytes.length, (int) seed);
+    bytes.rewind();
+    return CassandraMurmurHash.hash2_64(bytes, 0, bytes.remaining(), seed);
   }
-  
-  private static byte[] toBytes(long val) {
-     byte [] b = new byte[8];
-     for (int i = 7; i > 0; i--) {
-       b[i] = (byte) val;
-       val >>>= 8;
-     }
-     b[0] = (byte) val;
-     return b;
-   }
 }

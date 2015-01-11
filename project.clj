@@ -8,4 +8,5 @@
   :source-paths ["src/clj"]
   :java-source-paths ["src/java"]
   :profiles {:dev {:plugins [[jonase/eastwood "0.1.4"]]}}
-  :dependencies [[org.clojure/clojure "1.6.0"]])
+  :dependencies [[org.clojure/clojure "1.6.0"]
+                 [byte-transforms "0.1.3"]])
