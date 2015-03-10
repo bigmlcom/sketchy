@@ -8,9 +8,8 @@
 
 For [Leiningen](https://github.com/technomancy/leiningen):
 
-```clojure
-[bigml/sketchy "0.2.0"]
-```
+[![Clojars Project](http://clojars.org/bigml/sketchy/latest-version.svg)]
+(http://clojars.org/bigml/sketchy)
 
 ## Overview
 
