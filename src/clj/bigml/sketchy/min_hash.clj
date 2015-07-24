@@ -15,7 +15,7 @@
   ([] (create 0.05))
   ([error-rate]
      (vec (repeat (int (Math/ceil (/ (* error-rate error-rate))))
-                  Integer/MAX_VALUE))))
+                  Long/MAX_VALUE))))
 
 (defn- insert* [sketch val]
   (let [sketch-size (count sketch)]

@@ -220,9 +220,9 @@ test> (def hamlet-hash (min-hash/into (min-hash/create) hamlet-tokens))
 test> (def midsummer1-hash (min-hash/into (min-hash/create) midsummer-part1))
 test> (def midsummer2-hash (min-hash/into (min-hash/create) midsummer-part2))
 test> (min-hash/jaccard-similarity midsummer1-hash midsummer2-hash)
-0.2875
+0.2575
 test> (min-hash/jaccard-similarity midsummer1-hash hamlet-hash)
-0.2175
+0.2025
 ```
 
 The MinHashes are merge friendly as long as they're initialized with
