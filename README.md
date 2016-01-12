@@ -203,6 +203,11 @@ false
 comparing the [Jaccard
 similarity](http://en.wikipedia.org/wiki/Jaccard_index) of two sets.
 
+This implementation includes the improvements recommended in
+"[Improved Densification of One Permutation Hashing]
+(http://arxiv.org/abs/1406.4784)", which greatly reduces the
+time order for building a MinHash.
+
 To `create` a MinHash, you may provide a target error rate for
 similarity (default is 0.05). After that, you can either `insert`
 individual values or add collections `into` the MinHash.
@@ -220,9 +225,9 @@ test> (def hamlet-hash (min-hash/into (min-hash/create) hamlet-tokens))
 test> (def midsummer1-hash (min-hash/into (min-hash/create) midsummer-part1))
 test> (def midsummer2-hash (min-hash/into (min-hash/create) midsummer-part2))
 test> (min-hash/jaccard-similarity midsummer1-hash midsummer2-hash)
-0.2575
+0.2852
 test> (min-hash/jaccard-similarity midsummer1-hash hamlet-hash)
-0.2025
+0.2012
 ```
 
 The MinHashes are merge friendly as long as they're initialized with
