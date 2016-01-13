@@ -206,7 +206,7 @@ similarity](http://en.wikipedia.org/wiki/Jaccard_index) of two sets.
 This implementation includes the improvements recommended in
 "[Improved Densification of One Permutation Hashing]
 (http://arxiv.org/abs/1406.4784)", which greatly reduces the
-time order for building a MinHash.
+algorithmic complexity for building a MinHash.
 
 To `create` a MinHash, you may provide a target error rate for
 similarity (default is 0.05). After that, you can either `insert`
