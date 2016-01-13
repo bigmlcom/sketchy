@@ -23,5 +23,7 @@
         (mh/jaccard-similarity (mh/into (mh/create) (range 0.0 1E6))
                                (mh/into (mh/create) (range 1E5 1E6)))
         end (System/currentTimeMillis)]
-    (is (< (- end start) 1000))
+    ;; On a 2.2 GHz Intel Core i7 this takes ~160 seconds before
+    ;; commit e7a629b, after those changes it takes ~300 ms
+    (is (< (- end start) 10000))
     (is (< 0.85 similarity 0.95))))
