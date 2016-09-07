@@ -17,7 +17,7 @@
 (def ^:private max-long Long/MAX_VALUE)
 
 (defn- make-rand-shifts [bits]
-  (let [arr (make-array Long/TYPE 1)
+  (let [arr (long-array 1)
         _ (aset-long arr 0 bits)
         bs (BitSet/valueOf arr)]
     (for [i (range 64)] (.get bs i))))
