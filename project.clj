@@ -1,4 +1,4 @@
-(defproject bigml/sketchy "0.4.1"
+(defproject bigml/sketchy "0.4.2"
   :description "Sketching algorithms in Clojure"
   :url "https://github.com/bigmlcom/sketchy"
   :license {:name "Apache License, Version 2.0"
@@ -9,5 +9,5 @@
   :java-source-paths ["src/java"]
   :jvm-opts ^:replace ["-server"]
   :profiles {:dev {:plugins [[jonase/eastwood "0.2.3"]]}}
-  :dependencies [[org.clojure/clojure "1.8.0"]
+  :dependencies [[org.clojure/clojure "1.9.0"]
                  [byte-transforms "0.1.4"]])

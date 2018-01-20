@@ -6,10 +6,7 @@
 `sketchy` is available as a Maven artifact from
 [Clojars](http://clojars.org/bigml/sketchy).
 
-For [Leiningen](https://github.com/technomancy/leiningen):
-
-[![Clojars Project](http://clojars.org/bigml/sketchy/latest-version.svg)]
-(http://clojars.org/bigml/sketchy)
+[![Clojars Project](https://img.shields.io/clojars/v/bigml/sketchy.svg)](https://clojars.org/bigml/sketchy)
 
 ## Overview
 
