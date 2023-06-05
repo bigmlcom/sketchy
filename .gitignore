@@ -6,3 +6,7 @@ pom.xml
 .lein-deps-sum
 .lein-failures
 .nrepl*
+
+.clj-kondo/.cache
+.lsp/.cache
+.portal/

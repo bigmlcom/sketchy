@@ -10,4 +10,4 @@
   :jvm-opts ^:replace ["-server"]
   :profiles {:dev {:plugins [[jonase/eastwood "0.2.3"]]}}
   :dependencies [[org.clojure/clojure "1.9.0"]
-                 [byte-transforms "0.1.4"]])
+                 [org.clj-commons/byte-transforms "0.2.2"]])
