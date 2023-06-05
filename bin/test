@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# vim: ft=bash
+
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+
+bin/build javac
+
+if [[ $1 = check ]]; then
+    exec clojure -M:check
+elif [[ $1 = coverage ]]; then
+    shift
+    exec clojure -M:coverage "$@"
+else
+    exec clojure -M:test "$@"
+fi

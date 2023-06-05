@@ -1,0 +1,25 @@
+{:description "Sketching algorithms in Clojure"
+ :url "https://github.com/bigmlcom/sketchy"
+ :license {:name "Apache License, Version 2.0"
+           :url "http://www.apache.org/licenses/LICENSE-2.0"}
+ :paths ["src/clj" "target/classes"]
+ :deps {org.clj-commons/byte-transforms {:mvn/version "0.2.1"}}
+ :deps/prep-lib {:ensure "target/classes"
+                 :alias :build
+                 :fn javac}
+
+ :aliases {:dev {:extra-deps {}}
+           :build
+           {:deps {org.clojure/clojure {:mvn/version "1.11.1"}
+                   org.slf4j/slf4j-api {:mvn/version "2.0.6"}
+                   org.clojure/tools.build {:mvn/version "0.8.4"}
+                   slipset/deps-deploy {:git/url "https://github.com/slipset/deps-deploy.git"
+                                        :git/sha "c6c67a065dc24ef61cae756ec836e0db179b767f"}}
+            :ns-default build}
+           :test
+           {:extra-paths ["test"]
+            :extra-deps {lambdaisland/kaocha {:mvn/version "1.84.1335"}}
+            :jvm-opts ["-XX:-OmitStackTraceInFastThrow"
+                       "-Duser.language=en"
+                       "-Duser.country=US"]
+            :main-opts ["-m" "kaocha.runner"]}}}

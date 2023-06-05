@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# vim: ft=bash
+
+set -e
+
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+
+find-latest() {
+    local file latest
+    for file in $(find "$1" -type f -name "*.$2"); do
+        [[ -z $latest || $file -nt $latest ]] && latest=$file
+    done
+    echo $latest
+}
+
+if [[ $1 = clean ]]; then
+    rm -rf target
+elif [[ $1 = hiera ]]; then
+    shift
+    exec clojure -J-Dclojure.main.report=stderr -X:hiera "$@"
+elif [[ $1 = javac ]]; then
+    shift
+    if [[ ! -d target/classes || $(find-latest src/java java) -nt $(find-latest target/classes class) ]]; then
+        echo "Compiling Java class files"
+        exec clojure -J-Dclojure.main.report=stderr -T:build javac "$@"
+    fi
+elif [[ $1 = deploy ]]; then
+    shift
+    if [[ -z $CLOJARS_USERNAME ]]; then
+        read -p "Clojars username: " CLOJARS_USERNAME
+        if [[ -z $CLOJARS_USERNAME ]]; then
+            echo "No username available, aborting" >&2
+            exit 1
+        fi
+        export CLOJARS_USERNAME
+    fi
+    if [[ -z $CLOJARS_PASSWORD ]]; then
+        read -p "Clojars deploy token: " CLOJARS_PASSWORD
+        if [[ -z $CLOJARS_PASSWORD ]]; then
+            echo "No deploy token available, aborting" >&2
+            exit 1
+        fi
+        export CLOJARS_PASSWORD
+    fi
+    exec clojure -J-Dclojure.main.report=stderr -T:build deploy "$@"
+else
+    exec clojure -J-Dclojure.main.report=stderr -T:build "$@"
+fi
