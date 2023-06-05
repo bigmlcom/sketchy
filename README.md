@@ -201,7 +201,7 @@ comparing the [Jaccard
 similarity](http://en.wikipedia.org/wiki/Jaccard_index) of two sets.
 
 This implementation includes the improvements recommended in
-"[Improved Densification of One Permutation Hashing](http://arxiv.org/abs/1406.4784)", 
+"[Improved Densification of One Permutation Hashing](http://arxiv.org/abs/1406.4784)",
 which greatly reduces the algorithmic complexity for building a MinHash.
 
 To `create` a MinHash, you may provide a target error rate for
@@ -333,6 +333,10 @@ test> (count-min/estimate-count (count-min/merge midsummer1-cm midsummer2-cm)
                                 "love")
 104
 ```
+
+## Contributing to this project
+
+See doc/contributing.md
 
 ## License
 

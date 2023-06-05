@@ -1,0 +1,5 @@
+#kaocha/v1
+{:tests [{:id :unit
+          :test-paths ["test/"]
+          :ns-patterns ["bigml.sketchy.test.*"]}]
+ :reporter [kaocha.report/documentation]}
